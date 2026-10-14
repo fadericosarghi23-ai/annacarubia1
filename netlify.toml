@@ -1,0 +1,31 @@
+# Deploy statico su Netlify.
+# Il dominio canonico arriva da sé: astro.config.mjs usa la variabile URL di Netlify.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Node 20 è fuori supporto da aprile 2026: Node 22 LTS (Astro 5 lo supporta).
+  NODE_VERSION = "22"
+  # il lockfile generato su Windows fa saltare il binding nativo per Linux (npm#4828):
+  # su Netlify si installa fresco
+  NPM_FLAGS = "--no-package-lock"
+
+# File con l'hash nel nome (CSS, JS, font): non cambiano mai, cache di un anno.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Foto: nome fisso, possono essere sostituite → cache di un giorno, poi riconvalida.
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"

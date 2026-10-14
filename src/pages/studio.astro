@@ -1,0 +1,110 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Picture from '../components/Picture.astro';
+import Cta from '../components/Cta.astro';
+import { site, mapsUrl } from '../data/site';
+import { team } from '../data/team';
+import { immagini, numeriStudio, approccio, competenzeStudio } from '../data/contenuti';
+
+const crumbs = [{ label: 'Lo studio' }];
+---
+{/* INVENTATO: meta title e description. */}
+<Layout
+  title={`Chi sono: architetto d’interni a Songavazzo | ${site.nome}`}
+  description="Anna Carubia, architetto con specializzazione in progettazione d’interni: residenziale, uffici e contract, outdoor, dal rilievo laser scanner al cantiere."
+  transparent
+  pageType="AboutPage"
+  crumbs={crumbs}
+>
+  <PageHero img={immagini.testataStudio} crumbs={crumbs} eyebrow="Chi sono" lead="Case, uffici e spazi esterni progettati su misura, seguiti dal primo rilievo fino alla consegna.">
+    {/* INVENTATO */}Architetto d’interni, <em style="color: var(--accent-on-dark)">dal disegno al cantiere</em>
+  </PageHero>
+
+  <section class="section">
+    <div class="container split">
+      <div class="reveal">
+        <p class="eyebrow mb-2">Chi sono</p>
+        {/* MAPPA */}<h2 class="h2">Dott. Anna Carubia, architetto</h2>
+      </div>
+      <div class="prose lead reveal">
+        {/* MAPPA */}<p><strong>Architetto con specializzazione in progettazione d’interni, indoor e outdoor.</strong> Lavoro su progetti residenziali, uffici e contract, seguendo il cliente dal disegno iniziale fino al cantiere, con direzione e coordinamento dei lavori.</p>
+        {/* MAPPA */}<p>Grazie al rilievo con laser scanner realizzo progetti precisi al centimetro, per un approccio che arriva fino alla soluzione chiavi in mano.</p>
+        {/* INVENTATO */}<p>Mi piace in particolare accompagnare le giovani coppie alla prima casa, e lavorare sugli spazi piccoli, dove ogni centimetro conta. Vengo da una scuola in cui il cliente si segue fino all’ultima scelta, dagli arredi ai tessili: è lo stesso modo in cui lavoro oggi.</p>
+      </div>
+    </div>
+    <div class="container mt-4">
+      <div class="stats reveal">
+        {numeriStudio.map((n) => (
+          <div class="stat"><strong>{n.valore}</strong><span>{n.etichetta}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-sand">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Approccio</p>
+          {/* INVENTATO */}<h2 class="h2">Il mio approccio</h2>
+        </div>
+      </div>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 2.5rem">
+        {approccio.map((a, i) => (
+          <div class="reveal border-top" style={`padding-top:1.5rem; transition-delay:${i * 80}ms`}>
+            <p class="eyebrow mb-2">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="h3 mb-2">{a.titolo}</h3>
+            <p>{a.testo}</p>
+          </div>
+        ))}
+      </div>
+      <div class="grid-2 mt-4">
+        <div class="ratio-32 reveal"><Picture img={immagini.studio1} sizes="(min-width: 1024px) 45vw, 92vw" /></div>
+        <div class="ratio-32 reveal"><Picture img={immagini.studio2} sizes="(min-width: 1024px) 45vw, 92vw" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="team">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Il riferimento</p>
+          {/* INVENTATO */}<h2 class="h2">Chi segue il tuo progetto</h2>
+          {/* INVENTATO */}<p class="lead mt-2">Un solo interlocutore per tutto il percorso: rilievo, progetto, scelte e cantiere.</p>
+        </div>
+      </div>
+      <ul class="team-grid">
+        {team.map((p, i) => (
+          <li class="member reveal" id={p.id} style={`transition-delay:${(i % 4) * 60}ms`}>
+            <div class="photo"><Picture img={p.foto} sizes="(min-width: 1100px) 22vw, (min-width: 768px) 30vw, 46vw" /></div>
+            <h3>{p.nome}</h3>
+            <p>{p.ruolo}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section bg-sand">
+    <div class="container grid-2">
+      <div class="reveal">
+        <p class="eyebrow mb-2">La sede</p>
+        <h2 class="h2">{site.indirizzo.via}, {site.indirizzo.citta}</h2>
+        {/* INVENTATO */}<p class="lead mt-3">Lo studio è a Songavazzo, nell’Alta Val Seriana. Ricevo clienti, imprese e fornitori su appuntamento, in studio o direttamente in cantiere.</p>
+        <div class="btn-row mt-4">
+          <a href="/contatti/" class="btn btn-primary">Contatti e orari</a>
+          <a href={mapsUrl()} target="_blank" rel="noopener" class="btn btn-outline">Indicazioni stradali</a>
+        </div>
+      </div>
+      <div class="reveal">
+        <ul class="checklist lead">
+          {competenzeStudio.map((c) => <li>{c}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+</Layout>

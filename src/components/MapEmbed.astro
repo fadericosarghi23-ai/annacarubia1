@@ -1,0 +1,26 @@
+---
+/**
+ * Mappa della sede.
+ * - con `site.geo` (coordinate): OpenStreetMap, come nella base;
+ * - senza coordinate ma con l'indirizzo: embed Google interrogato con l'indirizzo, come nel
+ *   sito gemello `../anna-carubia/` (nessuna coordinata scritta a mano, nessuna API key);
+ * - senza nessuno dei due: riquadro segnaposto.
+ * Il contenitore .map / .map-box ha già misure fisse in CSS.
+ */
+import { site, isSet, indirizzoRiga } from '../data/site';
+
+const g = site.geo;
+const d = 0.012;
+const src = g
+  ? `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(`${g.lng - d},${g.lat - d / 2},${g.lng + d},${g.lat + d / 2}`)}&layer=mapnik&marker=${encodeURIComponent(`${g.lat},${g.lng}`)}`
+  : isSet(site.indirizzo.via)
+    ? `https://www.google.com/maps?q=${encodeURIComponent(`${indirizzoRiga()} (${site.indirizzo.provincia})`)}&hl=it&z=15&output=embed`
+    : null;
+---
+{src ? (
+  <iframe title={`Mappa: ${site.nome}, ${site.indirizzo.via}, ${site.indirizzo.citta}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade" src={src}></iframe>
+) : (
+  <div style="position:absolute; inset:0; display:grid; place-items:center; padding:1rem; text-align:center; color:var(--grey); font-size:.8125rem; letter-spacing:.14em; text-transform:uppercase; font-weight:600">
+    MAPPA da collegare: [[DA COMPILARE: coordinate della sede in site.geo]]
+  </div>
+)}

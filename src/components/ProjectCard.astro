@@ -1,0 +1,26 @@
+---
+import Picture from './Picture.astro';
+import { categoria, type Progetto } from '../data/progetti';
+
+interface Props {
+  p: Progetto;
+  heading?: 'h2' | 'h3';
+  eager?: boolean;
+}
+const { p, heading = 'h3', eager = false } = Astro.props;
+const H = heading;
+const cover = p.immagini[0];
+---
+<article class="reveal">
+  <a href={`/progetti/${p.slug}/`} class="card">
+    <div class:list={['media', { 'is-drawing': cover.drawing }]}>
+      <span class="cat">{categoria(p.categorie[0]).breve}</span>
+      <Picture img={cover} sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw" eager={eager} />
+    </div>
+    <H>{p.titolo}</H>
+    <p class="loc">{p.luogo}</p>
+    <ul class="tags" aria-label="Caratteristiche del progetto">
+      {p.temi.slice(0, 3).map((t) => <li>{t}</li>)}
+    </ul>
+  </a>
+</article>

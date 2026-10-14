@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import MapEmbed from '../components/MapEmbed.astro';
+import { site, isSet, telHref, mailHref, mapsUrl } from '../data/site';
+import { servizi } from '../data/servizi';
+
+const crumbs = [{ label: 'Contatti' }];
+// Form: scollegato finché site.form non è configurato (vedi src/data/site.ts).
+const { netlify, endpoint } = site.form;
+const collegato = netlify || !!endpoint;
+---
+{/* INVENTATO: meta description e invito; i dati vengono dalla MAPPA. */}
+<Layout
+  title={`Contatti – ${site.indirizzo.via}, ${site.indirizzo.citta} | ${site.nome}`}
+  description="Contatta Anna Carubia, architetto d’interni: Via Piave 18, 24020 Songavazzo (BG), telefono 339 131 0258. Raccontami il tuo progetto."
+  pageType="ContactPage"
+  crumbs={crumbs}
+>
+  <PageHead crumbs={crumbs} eyebrow="Contatti" lead="Una casa da ripensare, un ufficio da progettare: raccontami la tua idea. Ti rispondo io, direttamente.">
+    Parliamo del tuo progetto
+  </PageHead>
+
+  <section class="section">
+    <div class="container contact-layout">
+      <div class="contact-side">
+        <div class="info-cards">
+          <div class="info-card">
+            <h2><Icon name="luogo" class="ic" /> Indirizzo</h2>
+            <p>{site.indirizzo.via}<br />{site.indirizzo.cap} {site.indirizzo.citta} ({site.indirizzo.provincia})</p>
+            <a href={mapsUrl()} target="_blank" rel="noopener" class="text-link link-underline">Indicazioni stradali</a>
+          </div>
+          <div class="info-card">
+            <h2><Icon name="telefono" class="ic" /> Telefono</h2>
+            <p><a href={telHref()}>{site.telefono.display}</a></p>
+            <a href={telHref()} class="text-link link-underline">Chiama ora</a>
+          </div>
+          {isSet(site.email) && (
+            <div class="info-card">
+              <h2><Icon name="email" class="ic" /> Email</h2>
+              <p><a href={mailHref()}>{site.email}</a></p>
+              <a href={mailHref()} class="text-link link-underline">Scrivici</a>
+            </div>
+          )}
+          <div class="info-card">
+            <h2>Ricevimento</h2>
+            <p>{site.orari}</p>
+          </div>
+        </div>
+        <div class="map-box">
+          <MapEmbed />
+        </div>
+        {site.geo && <p class="xs muted">Mappa © OpenStreetMap contributors</p>}
+      </div>
+
+      <div id="richiesta" class="form-card">
+        <h2 class="h3">Richiedi un preventivo</h2>
+        <p class="mt-1 muted">Compila il modulo: ti ricontatteremo al più presto.</p>
+        <form
+          class="form"
+          name="contatti"
+          method="POST"
+          action={netlify ? '/grazie/' : endpoint || '#'}
+          data-netlify={netlify ? 'true' : undefined}
+          netlify-honeypot={netlify ? 'indirizzo-web' : undefined}
+          data-form-scollegato={collegato ? undefined : 'true'}
+          data-avviso={collegato ? undefined : `Il modulo non è ancora attivo e non ha inviato nulla. Per ora chiamami al ${site.telefono.display}.`}
+        >
+          {netlify && <input type="hidden" name="form-name" value="contatti" />}
+          <p class="hp"><label>Non compilare: <input name="indirizzo-web" tabindex="-1" autocomplete="off" /></label></p>
+          <div class="two">
+            <div class="field"><label for="f-nome">Nome e cognome *</label><input id="f-nome" name="nome" required autocomplete="name" /></div>
+            <div class="field"><label for="f-email">Email *</label><input id="f-email" name="email" type="email" required autocomplete="email" /></div>
+          </div>
+          <div class="two">
+            <div class="field"><label for="f-tel">Telefono</label><input id="f-tel" name="telefono" type="tel" autocomplete="tel" /></div>
+            <div class="field"><label for="f-comune">Comune dell’immobile</label><input id="f-comune" name="comune" autocomplete="address-level2" /></div>
+          </div>
+          <div class="field">
+            <label for="f-servizio">Di cosa hai bisogno?</label>
+            <select id="f-servizio" name="servizio">
+              <option value="">Seleziona un servizio</option>
+              {servizi.map((s) => <option>{s.nome}</option>)}
+              <option>Altro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-msg">Messaggio *</label>
+            <textarea id="f-msg" name="messaggio" required placeholder="Descrivi brevemente l’immobile e l’intervento che desideri"></textarea>
+          </div>
+          <label class="check"><input type="checkbox" name="privacy" required /> <span>Ho letto l’<a href="/privacy-policy/">informativa privacy</a> e acconsento al trattamento dei miei dati per essere ricontattato. *</span></label>
+          <div><button type="submit" class="btn btn-primary">Invia la richiesta</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  {!collegato && (
+    <script slot="scripts" is:inline>
+      // Base: il form non è collegato a nessun servizio. Configura site.form in src/data/site.ts.
+      document.querySelector('[data-form-scollegato]')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        alert(document.querySelector('[data-form-scollegato]').dataset.avviso);
+      });
+    </script>
+  )}
+</Layout>

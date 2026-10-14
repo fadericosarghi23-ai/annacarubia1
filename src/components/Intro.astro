@@ -1,0 +1,72 @@
+---
+/**
+ * Apertura con il logo (la «A» della scheda BNI, da confermare con la cliente).
+ * La «A» si disegna da sinistra a destra come un tratto di pennello, compaiono il nome e una
+ * lineetta d'accento, poi il sipario sale sul sito (~2.1s). Solo CSS: parte al primo paint.
+ * Una volta per sessione (classe .intro-vista decisa nell'head del Layout), niente con
+ * reduced-motion. Aggiunta su richiesta per questo cliente: non fa parte della base.
+ */
+import { site } from '../data/site';
+---
+<div class="intro" aria-hidden="true">
+  <div class="intro-centro">
+    <img src="/img/logo/logo-segno.png" alt="" width="400" height="400" decoding="sync" fetchpriority="high" />
+    <span class="intro-nome">{site.nome}</span>
+    <span class="intro-linea"></span>
+  </div>
+</div>
+
+<style is:global>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    pointer-events: none;
+    animation: ac-intro-su 0.8s var(--ease) 1.35s forwards;
+  }
+  .intro-centro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+    animation: ac-intro-via 0.35s ease-in 1.1s forwards;
+  }
+  .intro img {
+    width: clamp(96px, 15vw, 160px);
+    height: auto;
+    outline: 1px solid rgb(255 255 255 / 0.3);
+    clip-path: inset(0 100% 0 0);
+    transform: scale(0.94);
+    animation: ac-intro-segno 0.95s cubic-bezier(0.65, 0, 0.35, 1) 0.1s forwards;
+  }
+  .intro-nome {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.85);
+    opacity: 0;
+    transform: translateY(8px);
+    animation: ac-intro-nome 0.6s var(--ease) 0.55s forwards;
+  }
+  .intro-linea {
+    width: 2.5rem;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    animation: ac-intro-linea 0.5s var(--ease) 0.7s forwards;
+  }
+  html.intro-vista .intro { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .intro { display: none; }
+  }
+  @keyframes ac-intro-segno { to { clip-path: inset(0 0 0 0); transform: none; } }
+  @keyframes ac-intro-nome { to { opacity: 1; transform: none; } }
+  @keyframes ac-intro-linea { to { transform: none; } }
+  @keyframes ac-intro-via { to { opacity: 0; transform: translateY(-12px); } }
+  @keyframes ac-intro-su { to { transform: translateY(-100%); visibility: hidden; } }
+</style>

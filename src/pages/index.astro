@@ -1,0 +1,227 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Picture from '../components/Picture.astro';
+import Icon from '../components/Icon.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ProcessCards from '../components/ProcessCards.astro';
+import MapEmbed from '../components/MapEmbed.astro';
+import Cta from '../components/Cta.astro';
+import { site, isSet, telHref, mailHref, mapsUrl } from '../data/site';
+import { servizi } from '../data/servizi';
+import { team } from '../data/team';
+import { progetti, progettoBySlug } from '../data/progetti';
+import { heroSlides, inEvidenza, immagini, numeriHome, aree, faq } from '../data/contenuti';
+
+const slides = heroSlides.map((s) => {
+  const p = progettoBySlug(s.progetto);
+  return { p, img: p.immagini[s.foto] };
+});
+const faqLd = {
+  '@type': 'FAQPage',
+  '@id': `${site.dominio}/#faq`,
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.domanda, acceptedAnswer: { '@type': 'Answer', text: f.risposta } })),
+};
+---
+{/* INVENTATO: meta title e description, gli stessi del sito gemello. */}
+<Layout
+  title={`${site.nome} | Interior design a Bergamo`}
+  description={site.descrizione}
+  transparent
+  ogType="website"
+  jsonld={[faqLd]}
+>
+  <section class="hero" aria-label="Progetti in evidenza">
+    <div class="hero-slides" data-hero>
+      {slides.map(({ p, img }, i) => (
+        <figure class:list={['hero-slide', { 'is-active': i === 0 }]} data-title={p.titolo} data-location={p.luogo} data-href={`/progetti/${p.slug}/`}>
+          <Picture img={img} sizes="100vw" eager={i === 0} class="full-img" />
+        </figure>
+      ))}
+    </div>
+    <div class="container hero-content">
+      <p class="eyebrow-light mb-3">{/* INVENTATO */}{site.nome} · Interior design · {site.indirizzo.citta}</p>
+      <h1 class="h1">{/* MAPPA */}Progetto interni su misura, <em>dal disegno al cantiere</em></h1>
+      <div class="hero-meta">
+        <div>
+          {/* INVENTATO */}<p class="lead">Architetto d’interni in provincia di Bergamo: case, uffici e spazi contract.</p>
+          <div class="btn-row">
+            {/* MAPPA */}<a href="/contatti/#richiesta" class="btn btn-primary">Parliamo del tuo progetto</a>
+            <a href="/progetti/" class="btn btn-outline-light">Guarda i progetti</a>
+          </div>
+        </div>
+        <div class="hero-caption" aria-live="polite">
+          <span class="label">Nella foto</span>
+          <a href={`/progetti/${slides[0].p.slug}/`} class="link-underline" data-hero-caption>{slides[0].p.titolo} · {slides[0].p.luogo}</a>
+          <div class="hero-dots" role="group" aria-label="Scegli immagine">
+            {slides.map(({ p }, i) => (
+              <button type="button" aria-label={`Mostra ${p.titolo}`} aria-current={String(i === 0)} data-dot={i}></button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div class="reveal">
+        <div class="ratio-45">
+          <Picture img={immagini.homeStudio} sizes="(min-width: 1024px) 38vw, 92vw" />
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="eyebrow mb-2">Chi sono</p>
+        {/* INVENTATO */}<h2 class="h2">La figura che tiene insieme il disegno e il cantiere</h2>
+        <div class="prose mt-3 lead">
+          {/* MAPPA */}<p><strong>Anna Carubia</strong>, architetto con specializzazione in progettazione d’interni, indoor e outdoor.</p>
+          {/* MAPPA */}<p>Lavoro su progetti residenziali, uffici e contract, seguendo il cliente dal disegno iniziale fino al cantiere, con direzione e coordinamento dei lavori. Grazie al rilievo con laser scanner realizzo progetti precisi al centimetro, per un approccio che arriva fino alla soluzione chiavi in mano.</p>
+        </div>
+        <div class="stats mt-4">
+          {numeriHome.map((n) => (
+            <div class="stat"><strong>{n.valore}</strong><span>{n.etichetta}</span></div>
+          ))}
+        </div>
+        <a href="/studio/" class="btn btn-outline mt-4">Chi sono</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-sand">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow mb-2">Servizi</p>
+          {/* INVENTATO */}<h2 class="h2">Interni, uffici e spazi esterni su misura</h2>
+          {/* INVENTATO */}<p class="lead mt-2">Dal rilievo con laser scanner alla consegna chiavi in mano.</p>
+        </div>
+        <a href="/servizi/" class="btn btn-outline">Scopri tutti i servizi</a>
+      </div>
+      <ul class="services services-3 reveal">
+        {servizi.map((s) => (
+          <li class="service">
+            <Icon name={s.icona} class="icon" />
+            <h3 class="h4"><a href={`/servizi/#${s.id}`} class="link-underline">{s.nome}</a></h3>
+            <p>{s.breve}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Metodo</p>
+          {/* INVENTATO */}<h2 class="h2">Come lavoro</h2>
+        </div>
+        <a href="/metodo/" class="text-link link-underline">Il metodo completo</a>
+      </div>
+      <ProcessCards />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Progetti</p>
+          {/* INVENTATO */}<h2 class="h2">Dalla prima casa all’ufficio, dentro e fuori</h2>
+        </div>
+        <a href="/progetti/" class="text-link link-underline">Tutti i {progetti.length} progetti</a>
+      </div>
+      <div class="projects-grid">
+        {inEvidenza.map((slug) => <ProjectCard p={progettoBySlug(slug)} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-ink">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Dove lavoro</p>
+          {/* INVENTATO */}<h2 class="h2">Da Songavazzo a Bergamo e provincia</h2>
+          {/* INVENTATO */}<p class="lead mt-2" style="color: rgb(255 255 255 / 0.72)">Lo studio ha sede a Songavazzo, nell’Alta Val Seriana, e segue progetti di privati e aziende a Bergamo e in provincia.</p>
+        </div>
+      </div>
+      <ul class="areas reveal">
+        {aree.map((a) => (
+          <li class="area"><span>{a.conteggio}</span> <strong>{a.nome}</strong><p>{a.luoghi}</p></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Il riferimento</p>
+          {/* INVENTATO */}<h2 class="h2">Un solo architetto, dal rilievo alla consegna</h2>
+          {/* INVENTATO */}<p class="lead mt-2">Ogni progetto lo seguo io, dal primo incontro al cantiere.</p>
+        </div>
+        <a href="/studio/#team" class="text-link link-underline">Chi sono</a>
+      </div>
+      <div class="team-strip reveal">
+        {team.slice(0, 7).map((p) => (
+          <a href={`/studio/#${p.id}`} title={`${p.nome}, ${p.ruolo}`}><Picture img={p.foto} sizes="(min-width: 768px) 14vw, 33vw" /></a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-sand">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow mb-2">FAQ</p>
+          <h2 class="h2">Domande frequenti</h2>
+          <p class="lead mt-2">Non trovi la risposta che cerchi? Scrivici o chiamaci.</p>
+        </div>
+        <a href="/contatti/" class="btn btn-outline">Contattaci</a>
+      </div>
+      <div class="faq-cols reveal">
+        {[faq.slice(0, 5), faq.slice(5)].map((col, c) => (
+          <div class="faq">
+            {col.map((f, i) => (
+              <details open={c === 0 && i === 0}>
+                <summary>{f.domanda}</summary>
+                <p>{f.risposta}</p>
+              </details>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container grid-2">
+      <div class="reveal">
+        <p class="eyebrow mb-2">Dove sono</p>
+        <h2 class="h2">{site.nome} a {site.indirizzo.citta}</h2>
+        {/* INVENTATO */}<p class="lead mt-3">Lo studio è in Via Piave 18, a Songavazzo. Ricevo su appuntamento, in studio o in cantiere.</p>
+        <div class="contact-cards mt-4">
+          <div class="contact-card">
+            <h3>Indirizzo</h3>
+            <p>{site.indirizzo.via}<br />{site.indirizzo.cap} {site.indirizzo.citta} ({site.indirizzo.provincia})</p>
+            <a href={mapsUrl()} target="_blank" rel="noopener" class="text-link link-underline mt-1" style="display:inline-block">Apri in Google Maps</a>
+          </div>
+          <div class="contact-card">
+            <h3>Contatti</h3>
+            <p><a href={telHref()}>{site.telefono.display}</a></p>
+            {isSet(site.email) && <p><a href={mailHref()}>{site.email}</a></p>}
+          </div>
+        </div>
+      </div>
+      <div class="map reveal">
+        <MapEmbed />
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+
+  <script slot="scripts" is:inline type="module">var e=document.querySelector(`[data-hero]`);if(e){let t=[...e.querySelectorAll(`.hero-slide`)],n=[...document.querySelectorAll(`[data-dot]`)],r=document.querySelector(`[data-hero-caption]`),i=window.matchMedia(`(prefers-reduced-motion: reduce)`).matches,a=0,o,s=e=>{t[a].classList.remove(`is-active`),n[a].setAttribute(`aria-current`,`false`),a=(e+t.length)%t.length;let i=t[a];i.querySelectorAll(`img`).forEach(e=>e.setAttribute(`loading`,`eager`)),i.classList.add(`is-active`),n[a].setAttribute(`aria-current`,`true`),r&&(r.textContent=`${i.dataset.title} · ${i.dataset.location}`,r.href=i.dataset.href||`#`)},c=()=>{i||(o=window.setInterval(()=>s(a+1),6e3))};n.forEach((e,t)=>e.addEventListener(`click`,()=>{window.clearInterval(o),s(t),c()})),window.addEventListener(`load`,()=>t.forEach(e=>e.querySelectorAll(`img`).forEach(e=>e.setAttribute(`loading`,`eager`)))),c()}</script>
+</Layout>

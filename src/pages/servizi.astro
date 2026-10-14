@@ -1,0 +1,71 @@
+---
+import { site } from '../data/site';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Picture from '../components/Picture.astro';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import { servizi } from '../data/servizi';
+import { progettoBySlug, categoria } from '../data/progetti';
+import { immagini } from '../data/contenuti';
+
+const crumbs = [{ label: 'Servizi' }];
+---
+{/* INVENTATO: meta title; la description elenca i servizi della MAPPA. */}
+<Layout
+  title={`Servizi di progettazione d’interni a Bergamo | ${site.nome}`}
+  description="Progettazione d’interni residenziale, uffici e contract, arredamento, outdoor, rilievo con laser scanner e direzione lavori, fino alla soluzione chiavi in mano."
+  transparent
+  pageType="CollectionPage"
+  crumbs={crumbs}
+>
+  <PageHero img={immagini.testataServizi} crumbs={crumbs} eyebrow="Servizi" lead="Un solo riferimento, dal rilievo al cantiere, per case, uffici e spazi esterni.">
+    {/* INVENTATO */}Progettazione d’interni, dal rilievo alla consegna
+  </PageHero>
+
+  <nav class="bg-sand" aria-label="Indice dei servizi">
+    <div class="container" style="padding-block: 1.25rem">
+      <ul class="filters" style="margin:0">
+        {servizi.map((s) => <li><a href={`#${s.id}`}>{s.nome}</a></li>)}
+      </ul>
+    </div>
+  </nav>
+
+  {servizi.map((s, i) => {
+    const rev = i % 2 === 1;
+    const foto = progettoBySlug(s.progetti[0]);
+    return (
+      <section id={s.id} class:list={['section', { 'bg-sand': rev }]}>
+        <div class:list={['container split', { 'split-rev': rev }]}>
+          <div class="reveal" style={rev ? 'order: 2' : undefined}>
+            <a href={`/progetti/${foto.slug}/`} class="card">
+              <div class="media" style="aspect-ratio: 4/5">
+                <Picture img={foto.immagini[0]} sizes="(min-width: 1024px) 38vw, 92vw" />
+              </div>
+              <p class="loc mt-1">Nella foto: {foto.titolo}, {foto.luogo}</p>
+            </a>
+          </div>
+          <div class="reveal">
+            <Icon name={s.icona} class="service-icon" />
+            <p class="eyebrow mt-3 mb-2">Servizio {String(i + 1).padStart(2, '0')}</p>
+            <h2 class="h2">{s.nome}</h2>
+            <div class="prose mt-3">{s.paragrafi.map((p) => <p>{p}</p>)}</div>
+            <ul class="checklist mt-4">{s.checklist.map((c) => <li>{c}</li>)}</ul>
+            <div class="mt-4">
+              <p class="xs muted" style="text-transform:uppercase; letter-spacing:.16em; font-weight:600">Progetti correlati</p>
+              <ul class="mt-1" style="display:grid; gap:.35rem">
+                {s.progetti.map((slug) => {
+                  const p = progettoBySlug(slug);
+                  return <li><a href={`/progetti/${p.slug}/`} class="link-underline" style="color:var(--ink)">{p.titolo}</a> <span class="muted small">— {p.luogo}</span></li>;
+                })}
+              </ul>
+              <a href={`/progetti/${s.categoria}/`} class="text-link link-underline mt-3" style="display:inline-block">Vedi {categoria(s.categoria).nome}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  })}
+
+  <Cta />
+</Layout>

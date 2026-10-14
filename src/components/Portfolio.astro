@@ -1,0 +1,51 @@
+---
+/** Elenco progetti con filtri per categoria (/progetti/ e /progetti/<categoria>/). */
+import Layout from '../layouts/Layout.astro';
+import PageHead from './PageHead.astro';
+import ProjectCard from './ProjectCard.astro';
+import Cta from './Cta.astro';
+import { site, url } from '../data/site';
+import { progetti, categorie, progettiIn, type Categoria } from '../data/progetti';
+
+interface Props {
+  cat?: Categoria;
+}
+const { cat } = Astro.props;
+const lista = cat ? progettiIn(cat.slug) : progetti;
+const crumbs = cat ? [{ label: 'Progetti', href: '/progetti/' }, { label: cat.nome }] : [{ label: 'Progetti' }];
+const itemList = {
+  '@type': 'ItemList',
+  itemListElement: lista.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: url(`/progetti/${p.slug}/`), name: p.titolo })),
+};
+---
+{/* INVENTATO: title, description e introduzione del portfolio (i progetti stessi sono inventati, vedi progetti.ts). */}
+<Layout
+  title={cat ? `${cat.nome} | ${site.nome}` : `Progetti d’interni a Bergamo | ${site.nome}`}
+  description={cat ? cat.intro : 'Progetti d’interni tra Bergamo e l’Alta Val Seriana: case, piccoli spazi, uffici e contract, terrazzi e giardini.'}
+  pageType="CollectionPage"
+  crumbs={crumbs}
+  jsonld={[itemList]}
+>
+  <PageHead
+    crumbs={crumbs}
+    eyebrow="Portfolio"
+    lead={cat ? cat.intro : 'Case, piccoli spazi, uffici e spazi esterni: una selezione di progetti tra Bergamo e l’Alta Val Seriana.'}
+  >
+    {cat ? cat.nome : 'Progetti'}
+  </PageHead>
+
+  <section class="section-sm">
+    <div class="container">
+      <nav class="filters" aria-label="Filtra per categoria">
+        <a href="/progetti/" aria-current={cat ? undefined : 'page'}>Tutti<sup>{progetti.length}</sup></a>{categorie.map((c) => (
+          <a href={`/progetti/${c.slug}/`} aria-current={cat?.slug === c.slug ? 'page' : undefined}>{c.nome}<sup>{progettiIn(c.slug).length}</sup></a>
+        ))}
+      </nav>
+      <div class="projects-grid">
+        {lista.map((p, i) => <ProjectCard p={p} heading="h2" eager={i < 2} />)}
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+</Layout>

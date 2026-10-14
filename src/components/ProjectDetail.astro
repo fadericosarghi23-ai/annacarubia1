@@ -1,0 +1,159 @@
+---
+/**
+ * Scheda progetto. Due varianti, decise dalla copertina (immagini[0]):
+ * - foto     → .page-hero a tutta larghezza, header trasparente, copertina nascosta in galleria
+ * - disegno  → .page-head chiara, immagine intera sopra il testo, header pieno
+ */
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from './Breadcrumb.astro';
+import Picture from './Picture.astro';
+import ProjectCard from './ProjectCard.astro';
+import Lightbox from './Lightbox.astro';
+import Cta from './Cta.astro';
+import { site, url } from '../data/site';
+import { progetti, categoria, progettiIn, type Progetto } from '../data/progetti';
+import { persona } from '../data/team';
+import { imgFull, galleryClass } from '../lib/media';
+
+interface Props {
+  p: Progetto;
+}
+const { p } = Astro.props;
+const cover = p.immagini[0];
+// testata chiara: copertina disegno, oppure foto troppo piccola per il full-bleed (p.testataChiara)
+const disegno = !!cover.drawing || !!p.testataChiara;
+const cats = p.categorie.map(categoria);
+const cat = cats[0];
+const ref = persona(p.referente);
+// avatar 52px: la variante più piccola disponibile (webp), oppure il file singolo
+const refImg = ref ? (ref.foto.widths?.length ? `${ref.foto.src}-${ref.foto.widths[0]}.webp` : ref.foto.src) : '';
+
+const i = progetti.indexOf(p);
+const prev = progetti[(i - 1 + progetti.length) % progetti.length];
+const next = progetti[(i + 1) % progetti.length];
+
+const shared = (q: Progetto) => q.temi.filter((t) => p.temi.includes(t)).length;
+const simili = [
+  ...progettiIn(cat.slug).filter((q) => q !== p).sort((a, b) => shared(b) - shared(a)),
+  ...progetti.filter((q) => q !== p && !q.categorie.includes(cat.slug)),
+].slice(0, 3);
+
+const crumbs = [{ label: 'Progetti', href: '/progetti/' }, { label: cat.nome, href: `/progetti/${cat.slug}/` }, { label: p.titolo }];
+const testo = p.paragrafi.join(' ');
+const description = `${p.titolo}, ${p.luogo}: ${testo.length > 150 ? testo.slice(0, 150).trimEnd() + '…' : testo}`;
+const creativeWork = {
+  '@type': 'CreativeWork',
+  name: p.titolo,
+  about: p.intervento,
+  locationCreated: { '@type': 'Place', name: p.luogo },
+  creator: { '@id': url('/#organizzazione') },
+  keywords: p.temi.join(', '),
+  image: p.immagini.map((im) => ({ '@type': 'ImageObject', url: url(imgFull(im)), caption: im.alt })),
+};
+---
+<Layout
+  title={`${p.titolo} – ${p.luogo} | ${site.nome}`}
+  description={description}
+  transparent={!disegno}
+  pageType="ItemPage"
+  ogAlt={cover.alt}
+  crumbs={crumbs}
+  jsonld={[creativeWork]}
+>
+  {disegno ? (
+    <section class="page-head bg-sand">
+      <div class="container">
+        <Breadcrumb items={crumbs} />
+        <p class="eyebrow mb-2">{cats.map((c) => c.nome).join(' · ')}</p>
+        <h1 class="h1-page" style="max-width: 24ch">{p.titolo}</h1>
+        <p class="lead mt-2">{p.luogo}</p>
+      </div>
+    </section>
+  ) : (
+    <section class="page-hero">
+      <Picture img={cover} sizes="100vw" eager />
+      <div class="container inner">
+        <Breadcrumb items={crumbs} />
+        <p class="eyebrow-light mb-2">{cats.map((c) => c.nome).join(' · ')}</p>
+        <h1 class="h1-page">{p.titolo}</h1>
+        <p class="lead">{p.luogo}</p>
+      </div>
+    </section>
+  )}
+
+  <article class="section">
+    <div class="container project-layout">
+      <aside class="facts" aria-label="Scheda del progetto">
+        <dl>
+          <div class="row"><dt>Intervento</dt><dd>{p.intervento}</dd></div>
+          <div class="row"><dt>Luogo</dt><dd>{p.luogo}</dd></div>
+          <div class="row">
+            <dt>Categoria</dt>
+            <dd>{cats.map((c, k) => <>{k > 0 && ', '}<a href={`/progetti/${c.slug}/`} class="link-underline">{c.nome}</a></>)}</dd>
+          </div>
+          {p.progettisti && <div class="row"><dt>Progettisti e ruoli</dt><dd><ul>{p.progettisti.map((r) => <li>{r}</li>)}</ul></dd></div>}
+          {p.importo && <div class="row"><dt>Importo lavori</dt><dd>{p.importo}</dd></div>}
+          <div class="row"><dt>Temi</dt><dd><ul class="tags" style="margin-top:0">{p.temi.map((t) => <li>{t}</li>)}</ul></dd></div>
+          {ref && (
+            <div class="row">
+              <dt>Referente</dt>
+              <dd>
+                <a href={`/studio/#${ref.id}`} class="lead-person">
+                  <img src={refImg} alt="" width="52" height="52" loading="lazy" />
+                  <span><strong style="font-weight:500">{ref.nome}</strong><br /><span class="muted small">{ref.ruolo}</span></span>
+                </a>
+              </dd>
+            </div>
+          )}
+        </dl>
+        <a href="/contatti/#richiesta" class="btn btn-primary mt-4" style="width:100%">Parliamo del tuo progetto</a>
+      </aside>
+      <div>
+        {disegno && (
+          <figure class="mb-3">
+            <Picture img={cover} sizes="(min-width: 1024px) 60vw, 92vw" eager class="full-img" />
+            <figcaption class="xs muted mt-1">{cover.alt}</figcaption>
+          </figure>
+        )}
+        <h2 class="h3 mb-3">Il progetto</h2>
+        <div class="prose lead" style="font-size: 1.1rem">{p.paragrafi.map((t) => <p>{t}</p>)}</div>
+        <div class="gallery" data-gallery>
+          {p.immagini.map((im, k) => (
+            <figure class={galleryClass(im)} style={k === 0 && !disegno ? 'display:none' : undefined}>
+              <button type="button" data-index={k} data-full={imgFull(im)} data-alt={im.alt} aria-label={`Ingrandisci: ${im.alt}`}>
+                <Picture img={im} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw" />
+              </button>
+              <figcaption>{im.alt}</figcaption>
+            </figure>
+          ))}
+        </div>
+        {!disegno && <button type="button" class="text-link link-underline mt-3" data-open-all>{p.immagini.length === 1 ? 'Ingrandisci l’immagine' : `Vedi tutte le ${p.immagini.length} immagini`}</button>}
+      </div>
+    </div>
+  </article>
+
+  <nav class="container" aria-label="Altri progetti">
+    <div class="pager">
+      <a href={`/progetti/${prev.slug}/`} rel="prev"><small>← Progetto precedente</small><span>{prev.titolo}</span></a>
+      <a href={`/progetti/${next.slug}/`} rel="next"><small>Progetto successivo →</small><span>{next.titolo}</span></a>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Progetti simili</p>
+          <h2 class="h2">Potrebbe interessarti anche</h2>
+        </div>
+        <a href={`/progetti/${cat.slug}/`} class="text-link link-underline">{cat.nome}</a>
+      </div>
+      <div class="projects-grid">
+        {simili.map((q) => <ProjectCard p={q} />)}
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+  <Lightbox />
+</Layout>

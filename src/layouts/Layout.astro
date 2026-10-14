@@ -1,0 +1,258 @@
+---
+/**
+ * Layout unico: head (meta, OG, JSON-LD), header, menu mobile, footer.
+ * Lo script in fondo (header trasparente→pieno, menu mobile, reveal con IntersectionObserver)
+ * è quello originale, invariato.
+ */
+import '@fontsource-variable/inter';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import Intro from '../components/Intro.astro';
+import { site, isSet, telHref, mailHref, mapsUrl, indirizzoRiga, url, anno } from '../data/site';
+import { servizi } from '../data/servizi';
+import { categorie } from '../data/progetti';
+import { team } from '../data/team';
+import { nav } from '../data/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  /** header trasparente sopra una testata con foto */
+  transparent?: boolean;
+  ogType?: 'website' | 'article';
+  ogImage?: { src: string; width: number; height: number };
+  ogAlt?: string;
+  noindex?: boolean;
+  /** tipo schema.org della pagina (WebPage, AboutPage, ContactPage, CollectionPage, ItemPage…) */
+  pageType?: string;
+  crumbs?: { label: string; href?: string }[];
+  /** nodi JSON-LD aggiuntivi (FAQPage, CreativeWork, ItemList…) */
+  jsonld?: Record<string, unknown>[];
+}
+const {
+  title,
+  description,
+  transparent = false,
+  ogType = 'article',
+  ogImage = site.ogImage,
+  ogAlt = site.logo.alt,
+  noindex = false,
+  pageType = 'WebPage',
+  crumbs,
+  jsonld = [],
+} = Astro.props;
+
+const path = Astro.url.pathname;
+const canonical = url(path);
+const og = url(ogImage.src);
+const orgId = url('/#organizzazione');
+
+const organizzazione = {
+  '@type': ['ProfessionalService', 'LocalBusiness'],
+  '@id': orgId,
+  name: site.nome,
+  ...(isSet(site.ragioneSociale) ? { legalName: site.ragioneSociale } : {}),
+  alternateName: site.nomiAlternativi,
+  description: site.descrizione,
+  slogan: site.slogan,
+  url: url('/'),
+  logo: { '@type': 'ImageObject', url: url(site.logo.scuro.src), caption: `Logo ${site.nome}` },
+  ...(isSet(site.email) ? { email: site.email } : {}),
+  telephone: site.telefono.href,
+  ...(isSet(site.piva) ? { vatID: site.piva } : {}),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.indirizzo.via,
+    postalCode: site.indirizzo.cap,
+    addressLocality: site.indirizzo.citta,
+    addressRegion: site.indirizzo.provincia,
+    addressCountry: 'IT',
+  },
+  ...(site.geo ? { geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng } } : {}),
+  hasMap: mapsUrl(),
+  areaServed: site.areeServite.map((name) => ({ '@type': 'AdministrativeArea', name })),
+  knowsAbout: site.competenze,
+  sameAs: site.social.map((s) => s.url).filter(isSet),
+  employee: team.map((p) => ({
+    '@type': 'Person',
+    '@id': url(`/studio/#${p.id}`),
+    name: p.nome,
+    jobTitle: p.ruolo,
+    image: url(p.foto.src),
+    worksFor: { '@id': orgId },
+  })),
+  numberOfEmployees: { '@type': 'QuantitativeValue', value: team.length },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: `Servizi di ${site.nome}`,
+    itemListElement: servizi.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.nome, description: s.breve, url: url(`/servizi/#${s.id}`) },
+    })),
+  },
+};
+const graph = [
+  organizzazione,
+  { '@type': 'WebSite', '@id': url('/#sito'), url: url('/'), name: site.nome, inLanguage: 'it-IT', publisher: { '@id': orgId } },
+  {
+    '@type': pageType,
+    '@id': `${canonical}#pagina`,
+    url: canonical,
+    name: title,
+    description,
+    inLanguage: 'it-IT',
+    isPartOf: { '@id': url('/#sito') },
+    about: { '@id': orgId },
+    primaryImageOfPage: { '@type': 'ImageObject', url: og },
+  },
+  ...(crumbs
+    ? [{
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ label: 'Home', href: '/' }, ...crumbs].map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: c.label,
+          ...(c.href || i === crumbs.length ? { item: url(c.href ?? path) } : {}),
+        })),
+      }]
+    : []),
+  ...jsonld,
+];
+const ld = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+<!doctype html>
+<html lang="it" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex || !site.indicizza ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <meta name="theme-color" content={site.themeColor} />
+    <meta name="author" content={site.nome} />
+    {isSet(site.indirizzo.regioneIso) && <meta name="geo.region" content={site.indirizzo.regioneIso} />}
+    {isSet(site.indirizzo.citta) && <meta name="geo.placename" content={site.indirizzo.citta} />}
+    {site.geo && <meta name="geo.position" content={`${site.geo.lat};${site.geo.lng}`} />}
+    {site.geo && <meta name="ICBM" content={`${site.geo.lat}, ${site.geo.lng}`} />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:site_name" content={site.nome} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content={String(ogImage.width)} />
+    <meta property="og:image:height" content={String(ogImage.height)} />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+    <script type="application/ld+json" set:html={ld} />
+    <script is:inline>document.documentElement.classList.remove('no-js');</script>
+    <script is:inline>
+      // Apertura col logo (Intro.astro): una volta per sessione. Decisa qui nell'head, prima del paint.
+      try {
+        if (sessionStorage.getItem('ac-intro') === '1') document.documentElement.classList.add('intro-vista');
+        else sessionStorage.setItem('ac-intro', '1');
+      } catch (e) {
+        document.documentElement.classList.add('intro-vista');
+      }
+    </script>
+  </head>
+  <body>
+    <Intro />
+    <a href="#main" class="skip-link">Salta al contenuto</a>
+    <header class:list={['site-header', transparent ? 'is-transparent' : 'is-solid']} data-transparent={String(transparent)}>
+      <div class="container">
+        <a href="/" class="brand" aria-label={`${site.nome} — home`}>
+          <img src={site.logo.scuro.src} width={site.logo.scuro.width} height={site.logo.scuro.height} alt={site.logo.alt} class="logo-dark" fetchpriority={transparent ? 'auto' : 'high'} decoding="async" />
+          <img src={site.logo.chiaro.src} width={site.logo.chiaro.width} height={site.logo.chiaro.height} alt={site.logo.alt} class="logo-light" fetchpriority={transparent ? 'high' : 'auto'} decoding="async" />
+        </a>
+        <nav class="main-nav" aria-label="Menu principale">
+          {nav.map((n) => <a href={n.href} class="link-underline" aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
+          <a href="/contatti/#richiesta" class="btn btn-primary btn-sm nav-cta">Richiedi un preventivo</a>
+        </nav>
+        <button type="button" class="menu-toggle" aria-label="Apri il menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+    <div id="mobile-menu" class="mobile-menu" hidden>
+      <div class="container section-sm">
+        <nav aria-label="Menu principale mobile">
+          <a href="/">Home</a>
+          {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        </nav>
+        <a href="/contatti/#richiesta" class="btn btn-primary mt-4">Richiedi un preventivo</a>
+        <div class="contacts">
+          <p>{indirizzoRiga()}</p>
+          {isSet(site.email) && <a href={mailHref()}>{site.email}</a>}
+          <a href={telHref()}>{site.telefono.display}</a>
+        </div>
+      </div>
+    </div>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container top">
+        <div>
+          <a href="/" class="brand" aria-label={`${site.nome} — home`}>
+            <img src={site.logo.chiaro.src} width={site.logo.chiaro.width} height={site.logo.chiaro.height} alt={site.logo.alt} fetchpriority="auto" decoding="async" />
+          </a>
+          {/* INVENTATO */}<p class="mt-3" style="max-width: 22rem">Architetto d’interni in provincia di Bergamo. Case, piccoli spazi, uffici e outdoor, dal rilievo al cantiere.</p>
+          <div class="social">
+            {site.social.filter((s) => isSet(s.url)).map((s) => (
+              <a href={isSet(s.url) ? s.url : '#'} target="_blank" rel="noopener me" aria-label={`${site.nome} su ${s.nome}`}><Icon name={s.icona} /></a>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2>Studio</h2>
+          <ul>
+            {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+            <li><a href="/mappa-del-sito/">Mappa del sito</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Servizi</h2>
+          <ul>
+            {servizi.map((s) => <li><a href={`/servizi/#${s.id}`}>{s.nome}</a></li>)}
+          </ul>
+          <h2 class="mt-4">Progetti</h2>
+          <ul>
+            {categorie.map((c) => <li><a href={`/progetti/${c.slug}/`}>{c.nome}</a></li>)}
+          </ul>
+        </div>
+        <div itemscope itemtype="https://schema.org/PostalAddress">
+          <h2>Contatti</h2>
+          <address style="font-style: normal">
+            <p><strong style="color:#fff; font-weight:500">{site.nome}</strong></p>
+            <p><span itemprop="streetAddress">{site.indirizzo.via}</span><br /><span itemprop="postalCode">{site.indirizzo.cap}</span> <span itemprop="addressLocality">{site.indirizzo.citta}</span> (<span itemprop="addressRegion">{site.indirizzo.provincia}</span>)</p>
+            <p class="mt-2"><a href={telHref()}>Tel. {site.telefono.display}</a></p>
+            {isSet(site.email) && <p><a href={mailHref()}>{site.email}</a></p>}
+          </address>
+          <a href={mapsUrl()} target="_blank" rel="noopener" class="text-link mt-3" style="display:inline-block; color: var(--accent-on-dark)">Indicazioni stradali</a>
+        </div>
+      </div>
+      <div class="container bottom">
+        <p>© {anno} {site.nome}{isSet(site.piva) && ` · P.IVA ${site.piva}`}</p>
+        <nav aria-label="Link legali">
+          <a href="/privacy-policy/">Privacy policy</a>
+          <a href="/cookie-policy/">Cookie policy</a>
+          <a href="/mappa-del-sito/">Mappa del sito</a>
+        </nav>
+      </div>
+    </footer>
+    <slot name="scripts" />
+    <script is:inline type="module">var e=document.querySelector(`.site-header`);if(e){let t=e.dataset.transparent===`true`,n=()=>{let n=!t||window.scrollY>40;e.classList.toggle(`is-solid`,n),e.classList.toggle(`is-transparent`,!n)};n(),window.addEventListener(`scroll`,n,{passive:!0})}var t=document.querySelector(`.menu-toggle`),n=document.getElementById(`mobile-menu`);if(t&&n){let e=e=>{t.setAttribute(`aria-expanded`,String(e)),t.setAttribute(`aria-label`,e?`Chiudi il menu`:`Apri il menu`),n.hidden=!e,document.body.classList.toggle(`menu-open`,e),document.body.style.overflow=e?`hidden`:``};t.addEventListener(`click`,()=>e(n.hidden)),n.querySelectorAll(`a`).forEach(t=>t.addEventListener(`click`,()=>e(!1))),document.addEventListener(`keydown`,t=>{t.key===`Escape`&&!n.hidden&&e(!1)})}var r=new IntersectionObserver(e=>e.forEach(e=>{e.isIntersecting&&(e.target.classList.add(`is-in`),r.unobserve(e.target))}),{rootMargin:`0px 0px -8% 0px`});document.querySelectorAll(`.reveal`).forEach(e=>r.observe(e));</script>
+  </body>
+</html>

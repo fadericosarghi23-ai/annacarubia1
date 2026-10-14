@@ -1,0 +1,51 @@
+---
+import { site } from '../data/site';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProcessCards from '../components/ProcessCards.astro';
+import Cta from '../components/Cta.astro';
+import { immagini, fasiDettaglio } from '../data/contenuti';
+
+const crumbs = [{ label: 'Metodo' }];
+---
+{/* INVENTATO: meta title e description, sottotitolo e titoli della pagina. */}
+<Layout
+  title={`Metodo: dal rilievo alla consegna chiavi in mano | ${site.nome}`}
+  description="Come lavoro: rilievo con laser scanner, progetto d’interni con viste 3D, esecutivi e scelte, direzione lavori fino alla consegna chiavi in mano."
+  transparent
+  crumbs={crumbs}
+>
+  <PageHero img={immagini.testataMetodo} crumbs={crumbs} eyebrow="Metodo" lead="Quattro passaggi, dal rilievo alla consegna, con un solo riferimento.">
+    Dal rilievo alla consegna chiavi in mano
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <ProcessCards heading="h2" />
+    </div>
+  </section>
+
+  <section class="section bg-sand">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow mb-2">Le fasi nel dettaglio</p>
+          {/* INVENTATO */}<h2 class="h2">Il progetto, passo dopo passo</h2>
+          {/* INVENTATO */}<p class="lead mt-2">Ogni spazio è diverso, il modo di lavorare no: chiarezza su scelte, tempi e costi in ogni fase.</p>
+        </div>
+        <a href="/contatti/#richiesta" class="btn btn-primary">Fissa un primo incontro</a>
+      </div>
+      <ol class="steps">
+        {fasiDettaglio.map((f, i) => (
+          <li id={`fase-${i + 1}`} class="reveal" style={`transition-delay:${(i % 3) * 60}ms`}>
+            <span class="n">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="h4">{f.titolo}</h3>
+            <p>{f.testo}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <Cta />
+</Layout>

@@ -1,0 +1,19 @@
+---
+/**
+ * Una sola rotta per /progetti/<slug>/: categorie (elenco filtrato) e schede progetto
+ * condividono lo stesso livello di URL, come nel sito di partenza.
+ */
+import Portfolio from '../../components/Portfolio.astro';
+import ProjectDetail from '../../components/ProjectDetail.astro';
+import { progetti, categorie, type Categoria, type Progetto } from '../../data/progetti';
+
+export function getStaticPaths() {
+  return [
+    ...categorie.map((cat) => ({ params: { slug: cat.slug }, props: { cat } })),
+    ...progetti.map((p) => ({ params: { slug: p.slug }, props: { p } })),
+  ];
+}
+
+const { cat, p } = Astro.props as { cat?: Categoria; p?: Progetto };
+---
+{cat ? <Portfolio cat={cat} /> : <ProjectDetail p={p!} />}

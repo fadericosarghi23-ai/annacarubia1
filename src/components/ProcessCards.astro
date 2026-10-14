@@ -1,0 +1,21 @@
+---
+/** Le 4 card del metodo con foto sotto velatura (home e /metodo/). */
+import Picture from './Picture.astro';
+import { fasi } from '../data/contenuti';
+
+interface Props {
+  heading?: 'h2' | 'h3';
+}
+const { heading = 'h3' } = Astro.props;
+const H = heading;
+---
+<ol class="process">
+  {fasi.map((f, i) => (
+    <li class="process-card reveal" style={`transition-delay:${i * 60}ms`}>
+      <Picture img={f.img} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+      <span class="num">{String(i + 1).padStart(2, '0')}</span>
+      <H class="h4">{f.titolo}</H>
+      <p>{f.testo}</p>
+    </li>
+  ))}
+</ol>

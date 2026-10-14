@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Anna Carubia Architetto — Palette, errori corretti e migliorie</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #1c1a19; font-size: 9.1pt; line-height: 1.36; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 13mm 15mm 0; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .top { display: flex; justify-content: space-between; align-items: center; font-size: 8.4pt; color: #6d6863; border-bottom: 1px solid #e4e0dc; padding-bottom: 3mm; }
+  .brand { color: #1c1a19; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .brand i { width: 7px; height: 7px; border-radius: 50%; background: #931a1d; display: inline-block; }
+  .brand span { font-weight: 400; color: #6d6863; }
+  .bottom { position: absolute; left: 15mm; right: 15mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 8pt; color: #6d6863; border-top: 1px solid #e4e0dc; padding-top: 2.5mm; }
+  h1 { font-size: 20pt; margin: 7mm 0 1mm; letter-spacing: -0.01em; }
+  .sub { color: #6d6863; font-size: 10pt; margin: 0 0 6mm; }
+  h2 { color: #931a1d; font-size: 13.5pt; margin: 5.5mm 0 2mm; }
+  h3 { font-size: 10.5pt; margin: 4.5mm 0 1.5mm; }
+  p { margin: 0 0 2mm; }
+  table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 1mm; }
+  th { text-align: left; font-size: 8.4pt; background: #f5f2ee; border-bottom: 1.5px solid #931a1d; padding: 1.4mm 2mm; }
+  td { border-bottom: 1px solid #ece8e4; padding: 1.15mm 2mm; vertical-align: middle; }
+  .sw { width: 13mm; padding: 1.2mm 0; }
+  .sw div { width: 12mm; height: 5.4mm; border: 1px solid rgb(28 26 25 / 0.12); }
+  .mono { font-family: Consolas, 'Courier New', monospace; font-size: 8.6pt; color: #3a3735; }
+  .ok { color: #2e7d32; font-weight: 700; }
+  .b { font-weight: 700; }
+  .note { color: #6d6863; font-size: 8.4pt; }
+  .num { color: #931a1d; font-weight: 700; width: 9mm; }
+  .k { width: 33mm; font-weight: 700; }
+  .tag { display: inline-block; font-size: 7.4pt; font-weight: 700; padding: 0.4mm 1.6mm; border-radius: 2px; background: #f3e4e3; color: #741417; }
+  .box { background: #f5f2ee; border-left: 3px solid #931a1d; padding: 3mm 4mm; margin-top: 4mm; }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGINA 1 ============ -->
+<section class="page">
+  <div class="top"><div class="brand"><i></i> anna carubia <span>architetto</span></div><div>Palette, errori corretti e migliorie</div></div>
+  <h1>Palette, errori corretti e migliorie</h1>
+  <p class="sub">Sito di Anna Carubia, architetto d’interni, Songavazzo (BG) · 14 ottobre 2026 · 31 pagine, Astro, pubblicazione su Netlify (repository annacarubia1)</p>
+
+  <h2>Palette</h2>
+  <p>La cliente non ha ancora fornito i colori del marchio: la palette è quella della base, un <b>rosso mattone</b> su neutri caldi (inchiostro, sabbia, grigio pietra), affiancata dal <b>grigio del logo</b> ricavato dalla «A» della scheda BNI. Tutti i colori vivono in un solo blocco di token (<span class="mono">src/styles/global.css</span>): quando arriverà la palette di Anna si cambia lì, senza toccare le pagine.</p>
+  <table>
+    <tr><th></th><th>Token</th><th>Valore</th><th>Nome</th><th>Dove si usa</th></tr>
+    <tr><td class="sw"><div style="background:#931a1d"></div></td><td class="mono">--accent</td><td class="mono">#931A1D</td><td class="b">Rosso mattone</td><td>Bottoni, occhielli, link, logo sull’hero, lineetta dell’apertura</td></tr>
+    <tr><td class="sw"><div style="background:#741417"></div></td><td class="mono">--accent-dark</td><td class="mono">#741417</td><td class="b">Rosso scuro</td><td>Passaggio del mouse sui bottoni</td></tr>
+    <tr><td class="sw"><div style="background:#f3e4e3"></div></td><td class="mono">--accent-soft</td><td class="mono">#F3E4E3</td><td class="b">Rosa velato</td><td>Alone dei campi del modulo attivi</td></tr>
+    <tr><td class="sw"><div style="background:#e79a9b"></div></td><td class="mono">--accent-on-dark</td><td class="mono">#E79A9B</td><td class="b">Rosa chiaro</td><td>Accenti su fondo scuro: corsivo dell’hero, zone di lavoro, footer</td></tr>
+    <tr><td class="sw"><div style="background:#1c1a19"></div></td><td class="mono">--ink</td><td class="mono">#1C1A19</td><td class="b">Inchiostro</td><td>Titoli, fasce scure, footer, apertura animata</td></tr>
+    <tr><td class="sw"><div style="background:#3a3735"></div></td><td class="mono">--text</td><td class="mono">#3A3735</td><td class="b">Testo</td><td>Paragrafi</td></tr>
+    <tr><td class="sw"><div style="background:#6d6863"></div></td><td class="mono">--grey</td><td class="mono">#6D6863</td><td class="b">Grigio pietra</td><td>Testi secondari, didascalie, briciole</td></tr>
+    <tr><td class="sw"><div style="background:#ece8e4"></div></td><td class="mono">--grey-light</td><td class="mono">#ECE8E4</td><td class="b">Grigio chiaro</td><td>Fondo delle foto mentre si caricano</td></tr>
+    <tr><td class="sw"><div style="background:#f5f2ee"></div></td><td class="mono">--sand</td><td class="mono">#F5F2EE</td><td class="b">Sabbia</td><td>Sezioni alternate, testate chiare</td></tr>
+    <tr><td class="sw"><div style="background:#989586"></div></td><td class="mono">logo</td><td class="mono">#989586</td><td class="b">Grigio del logo</td><td>Logo nell’header bianco, monogramma, icone del sito</td></tr>
+  </table>
+  <p><b>Tipografia.</b> Newsreader per titoli e numeri (serif editoriale, con corsivo per la parte in evidenza dei titoli), Inter per i testi (leggibile anche piccolo). Entrambi i caratteri sono caricati dal sito stesso, senza servizi esterni.</p>
+
+  <h3>Leggibilità dei colori</h3>
+  <table>
+    <tr><th>Combinazione</th><th>Contrasto</th><th>Esito (WCAG 2.1)</th></tr>
+    <tr><td>Titoli su bianco</td><td class="b">17.3 : 1</td><td class="ok">AAA</td></tr>
+    <tr><td>Testo su bianco</td><td class="b">11.8 : 1</td><td class="ok">AAA</td></tr>
+    <tr><td>Bianco sui bottoni rossi</td><td class="b">8.7 : 1</td><td class="ok">AAA</td></tr>
+    <tr><td>Occhielli e link rossi su bianco</td><td class="b">8.7 : 1</td><td class="ok">AAA</td></tr>
+    <tr><td>Testo su fascia scura e footer</td><td class="b">7.9 – 17.3 : 1</td><td class="ok">AAA</td></tr>
+    <tr><td>Rosa chiaro su fascia scura</td><td class="b">7.8 : 1</td><td class="ok">AAA</td></tr>
+    <tr><td>Testo secondario su bianco / su sabbia</td><td class="b">5.5 / 4.9 : 1</td><td class="ok">AA</td></tr>
+  </table>
+  <p class="note">AA (4,5:1) è la soglia richiesta per i siti accessibili: tutte le combinazioni usate la superano.</p>
+
+  <div class="bottom"><div>Sito di Anna Carubia - dettaglio tecnico nel repository (README.md, TESTI-INVENTATI.md, CREDITI-FOTO.md)</div><div>pagina 1</div></div>
+</section>
+
+<!-- ============ PAGINA 2 ============ -->
+<section class="page">
+  <div class="top"><div class="brand"><i></i> anna carubia <span>architetto</span></div><div>Palette, errori corretti e migliorie</div></div>
+
+  <h2>Errori corretti</h2>
+  <h3>Nella presenza online attuale</h3>
+  <table>
+    <tr><th style="width:34mm">Problema</th><th>Com’era</th><th>Com’è ora</th></tr>
+    <tr><td class="b">Nessun sito</td><td>Anna esiste online solo come scheda del gruppo BNI Bergamo: una bio e un telefono, niente lavori né servizi.</td><td>Sito di 31 pagine: chi sono, 6 servizi, metodo, 16 progetti con galleria, contatti con mappa e modulo.</td></tr>
+    <tr><td class="b">Contatti nascosti</td><td>Sulla scheda l’email è dietro un modulo interno; indirizzo e telefono sono in fondo alla pagina.</td><td>Telefono e indirizzo nel menu, nel footer, nei contatti e nei dati per Google; mappa della sede.</td></tr>
+    <tr><td class="b">Logo solo raster</td><td>Una «A» in un riquadro 400×400, usabile solo così com’è.</td><td>Ricavate le versioni per il web: grigia, rossa sopra le foto, bianca per l’apertura, favicon e monogramma.</td></tr>
+    <tr><td class="b">Testi da networking</td><td>La bio della scheda è scritta per il networking, in tono colloquiale: non adatta a un sito professionale.</td><td>Bio riscritta in tono professionale; ogni testo è marcato come preso dalla scheda o scritto da noi.</td></tr>
+  </table>
+
+  <h3>Nella base e durante la lavorazione</h3>
+  <table>
+    <tr><th style="width:34mm">Errore</th><th>Com’era</th><th>Correzione</th></tr>
+    <tr><td class="b">Build su Netlify</td><td>In un’installazione pulita la build si fermava: un’espressione nel calcolo del dominio era stata troncata.</td><td>Corretta e verificata ricompilando da zero come fa Netlify: 31 pagine.</td></tr>
+    <tr><td class="b">Avatar rotto in 15 schede</td><td>Il volto del referente puntava a una misura dell’immagine che non esiste.</td><td>Usa la misura più piccola disponibile; corretto anche nella base, per i siti futuri.</td></tr>
+    <tr><td class="b">Segnaposto visibili</td><td>Email, P.IVA e ritratto mancanti comparivano come testo «da compilare» o riquadro grigio.</td><td>Un dato non compilato non viene mostrato; al posto del ritratto c’è il monogramma col logo.</td></tr>
+    <tr><td class="b">Foto sgranate</td><td>10 copertine di progetto erano a 490 px e sgranavano a tutta larghezza.</td><td>Stesse foto riscaricate in alta risoluzione; ogni progetto ha ora una galleria di 3 foto.</td></tr>
+    <tr><td class="b">Logo invisibile sull’hero</td><td>Il riquadro grigio si confondeva con le foto dell’apertura.</td><td>Sull’hero il logo è rosso; scorrendo, con l’header bianco, torna grigio.</td></tr>
+    <tr><td class="b">Volto di un’altra persona</td><td>Per riempire il ritratto era stata messa una foto stock di una sconosciuta.</td><td>Rimossa: nessun volto che non sia di Anna.</td></tr>
+    <tr><td class="b">Dominio d’esempio</td><td>Canonical, sitemap e anteprime social puntavano a un dominio fittizio.</td><td>Prendono da soli l’indirizzo del sito su Netlify; con il dominio vero si aggiornano.</td></tr>
+    <tr><td class="b">Ambiente di pubblicazione</td><td>Netlify era impostato su Node 20, fuori supporto da aprile 2026.</td><td>Passato a Node 22, con cache e intestazioni di sicurezza configurate.</td></tr>
+    <tr><td class="b">Immagini pesanti</td><td>103 MB di varianti, con JPG generati a ogni misura e copie a 2400 px mai necessarie.</td><td>49 MB (−52%): AVIF e WebP compressi, un solo JPG di riserva, logo e icone da 419 a 198 KB.</td></tr>
+    <tr><td class="b">Dati di un altro cliente</td><td>Lo strumento di controllo della base conteneva l’elenco dei dati del sito di partenza.</td><td>Escluso dal sito di Anna e dal repository.</td></tr>
+  </table>
+
+  <div class="bottom"><div>Sito di Anna Carubia - dettaglio tecnico nel repository (README.md, TESTI-INVENTATI.md, CREDITI-FOTO.md)</div><div>pagina 2</div></div>
+</section>
+
+<!-- ============ PAGINA 3 ============ -->
+<section class="page">
+  <div class="top"><div class="brand"><i></i> anna carubia <span>architetto</span></div><div>Palette, errori corretti e migliorie</div></div>
+
+  <h2>Migliorie</h2>
+  <table>
+    <tr><td class="num">01</td><td class="k">Apertura animata</td><td>All’avvio la «A» del logo si disegna come un tratto di pennello, compaiono il nome e una lineetta rossa, poi il sipario sale sul sito. Circa 2 secondi, una volta per sessione.</td></tr>
+    <tr><td class="num">02</td><td class="k">Logo che cambia</td><td>Rosso sopra le foto dell’hero, grigio quando l’header diventa bianco scorrendo la pagina.</td></tr>
+    <tr><td class="num">03</td><td class="k">Hero a carosello</td><td>Sei progetti in dissolvenza con lento zoom, didascalia che segue la foto, pallini per scegliere.</td></tr>
+    <tr><td class="num">04</td><td class="k">Portfolio</td><td>16 progetti in 4 ambiti (residenziale, piccoli spazi, outdoor, uffici e contract) con filtri; ogni scheda ha dati del progetto, testo, galleria a 3 foto con ingrandimento, progetti simili.</td></tr>
+    <tr><td class="num">05</td><td class="k">Servizi e metodo</td><td>Sei servizi con dettaglio e progetti collegati; metodo in 4 fasi illustrate e 9 passaggi, dal rilievo laser scanner alla consegna chiavi in mano; 9 domande frequenti.</td></tr>
+    <tr><td class="num">06</td><td class="k">Velocità</td><td>Sito statico; ogni foto in AVIF e WebP in 5 misure, il browser scarica solo quella che gli serve: la home pesa circa 0,8 MB al primo caricamento.</td></tr>
+    <tr><td class="num">07</td><td class="k">Trovabilità su Google</td><td>Titolo e descrizione per ogni pagina, canonical, sitemap, dati strutturati (attività, servizi, FAQ, progetti), anteprima per i social, llms.txt per gli assistenti AI. Oggi in <span class="tag">noindex</span>: si accende dopo l’approvazione.</td></tr>
+    <tr><td class="num">08</td><td class="k">Accessibilità</td><td>Contrasti AA/AAA, testi alternativi, link «salta al contenuto», menu a tutto schermo su telefono, animazioni disattivate per chi lo chiede al sistema.</td></tr>
+    <tr><td class="num">09</td><td class="k">Pronto per Netlify</td><td>Build verificata da installazione pulita, cache lunga per i file che non cambiano, intestazioni di sicurezza, pagina 404, modulo predisposto per Netlify Forms.</td></tr>
+    <tr><td class="num">10</td><td class="k">Facile da aggiornare</td><td>Recapiti in un file, palette in un blocco, progetti e servizi in schede di testo; le foto vere si mettono con lo stesso nome e un comando le ricomprime.</td></tr>
+  </table>
+
+  <h3>Contenuti: da dove vengono</h3>
+  <p><b>Fatti</b> dalla scheda BNI Bergamo (capitolo Presolana): nome, professione, specializzazione in interni indoor e outdoor, rilievo con laser scanner, direzione lavori, chiavi in mano, sede in Via Piave 18 a Songavazzo, telefono 339 131 0258. <b>Testi</b> scritti da noi dove mancava materiale: 72 blocchi, marcati nel codice ed elencati in TESTI-INVENTATI.md. <b>Progetti</b>: i 16 progetti sono esempi, non lavori di Anna. <b>Foto</b>: 56 foto stock provvisorie (Unsplash, uso commerciale consentito) che <b>non ritraggono lavori della cliente</b>; la titolare è rappresentata dal monogramma, non da un volto inventato.</p>
+  <div class="box"><b>Prima di rendere il sito pubblico</b> a tutti gli effetti, progetti, foto e testi marcati vanno sostituiti o approvati da Anna: per questo il sito è pubblicato in modalità anteprima, non indicizzata.</div>
+
+  <div class="bottom"><div>Sito di Anna Carubia - dettaglio tecnico nel repository (README.md, TESTI-INVENTATI.md, CREDITI-FOTO.md)</div><div>pagina 3</div></div>
+</section>
+
+<!-- ============ PAGINA 4 ============ -->
+<section class="page">
+  <div class="top"><div class="brand"><i></i> anna carubia <span>architetto</span></div><div>Palette, errori corretti e migliorie</div></div>
+
+  <h2>Cosa serve da Anna prima di andare online</h2>
+  <table>
+    <tr><th style="width:58mm">Materiale</th><th>Dove va / perché</th></tr>
+    <tr><td class="b">Email da pubblicare</td><td>Contatti, footer, privacy; oggi non compare perché nascosta su BNI.</td></tr>
+    <tr><td class="b">P.IVA, dicitura professionale, PEC, n. Ordine</td><td>Riga legale del footer, obbligatoria per un professionista, e informativa privacy.</td></tr>
+    <tr><td class="b">Destinazione del modulo</td><td>Email o Netlify Forms (già predisposto): oggi il modulo non invia e invita a telefonare.</td></tr>
+    <tr><td class="b">Foto dei suoi progetti</td><td>Al posto delle 56 foto stock e dei 16 progetti di esempio: per ogni lavoro titolo, luogo, anno, tipologia e una serie di foto HD.</td></tr>
+    <tr><td class="b">Ritratto professionale</td><td>Al posto del monogramma (pagina Chi sono, home, schede progetto).</td></tr>
+    <tr><td class="b">Conferma e logo in SVG</td><td>La «A» viene dalla scheda BNI: va confermato che sia il suo logo e serve la versione vettoriale.</td></tr>
+    <tr><td class="b">Palette del marchio</td><td>Se ha colori suoi, si cambiano i token: oggi c’è la palette della base.</td></tr>
+    <tr><td class="b">Instagram e altri social</td><td>Icone nel footer, oggi nascoste perché mancano gli indirizzi.</td></tr>
+    <tr><td class="b">Dominio</td><td>Per pubblicare su un indirizzo suo; canonical e sitemap si aggiornano da soli.</td></tr>
+    <tr><td class="b">Approvazione dei testi</td><td>I 72 blocchi scritti da noi (TESTI-INVENTATI.md); poi si attiva l’indicizzazione su Google.</td></tr>
+  </table>
+
+  <h3>Verifiche eseguite</h3>
+  <p>Installazione pulita come su Netlify e build completa: 31 pagine generate. 3.753 collegamenti e risorse interne controllati, nessuno rotto. Ogni pagina ha un solo titolo principale, titolo e descrizione, canonical e anteprima social sull’indirizzo Netlify. Nessun testo segnaposto visibile. Sitemap (29 indirizzi), robots, pagina 404, favicon e manifest presenti. Animazioni provate a schermo: apertura col logo, carosello dell’hero, header e logo che cambiano allo scorrimento, comparsa delle sezioni, galleria con ingrandimento. Una sola apertura per sessione e nessuna animazione per chi le disattiva. Contrasti misurati: tutti almeno AA.</p>
+
+  <h3>Come si accende Google</h3>
+  <p>Quando Anna avrà approvato contenuti e foto: in <span class="mono">src/data/site.ts</span> si mette <span class="mono">indicizza: true</span> e, se c’è, il dominio. Alla pubblicazione successiva il sito diventa visibile ai motori di ricerca.</p>
+
+  <div class="bottom"><div>Sito di Anna Carubia - dettaglio tecnico nel repository (README.md, TESTI-INVENTATI.md, CREDITI-FOTO.md)</div><div>pagina 4</div></div>
+</section>
+
+</body>
+</html>
